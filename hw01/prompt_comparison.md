@@ -34,7 +34,7 @@ All three strategies converged on largely the same substantive advice. That said
 
 **Claim:** "federal guidance for many consumer installment and credit products calls for charge-off no later than 180 days past due" (from the Business Context response on delinquency vs. default)
 
-**Source:** Federal Reserve, https://www.federalregister.gov/documents/2000/06/12/00-14704/uniform-retail-credit-classification-and-account-management-policy 
+**Source:** Federal Register, https://www.federalregister.gov/documents/2000/06/12/00-14704/uniform-retail-credit-classification-and-account-management-policy 
 
 **What the source says:** The policy sets two different thresholds, not one: closed-end (installment) loans should be classified as a loss and charged off at 120 cumulative days past due, while open-end (revolving) loans get the longer 180-day threshold.
 
