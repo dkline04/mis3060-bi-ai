@@ -29,3 +29,13 @@
 ## Conclusion
 
 All three strategies converged on largely the same substantive advice, which is itself a useful finding — it suggests that once a project already has real context loaded in (as ours did from Part 2), the incremental value of a role or format prompt shrinks. That said, the role-assigned prompt produced the response closest to something you could actually say verbatim in a committee meeting, while the few-shot prompt produced the most reusable, scannable artifact — a checklist you could paste into internal documentation. The zero-shot response was the most complete narrative explanation but the least tailored to a specific audience or use case. For a working BI analyst, the most useful outcome didn't come from picking one "winning" strategy, but from combining them: use role-assignment when rehearsing what to actually say in the room, and few-shot formatting when turning that judgment into a reusable team standard.
+
+## Fact-Check
+
+**Claim:** "federal guidance for many consumer installment and credit products calls for charge-off no later than 180 days past due" (from the Business Context response on delinquency vs. default)
+
+**Source:** Federal Reserve, "Uniform Retail-Credit Classification and Account-Management Policy" — https://www.federalreserve.gov/frrs/guidance/uniform-retail-credit-classification-and-account-management-policy.htm
+
+**What the source says:** The policy sets two different thresholds, not one: closed-end (installment) loans should be classified as a loss and charged off at 120 cumulative days past due, while open-end (revolving) loans get the longer 180-day threshold.
+
+**Agreement / conclusion:** Partially disagree. Claude wasn't wrong that 180 days appears in federal guidance, but it applied that number to "consumer installment" loans broadly — when the actual policy reserves 180 days for revolving/open-end credit and sets a shorter 120-day threshold for installment (closed-end) loans, which is what most of Wildcat's book (Auto, Personal, Home Improvement, Education) actually is. This is a good example of why a specific numeric threshold from Claude should always be checked before it's used in an actual policy decision — the general shape of the answer was right, but the exact number depended on a loan-type distinction Claude glossed over.
