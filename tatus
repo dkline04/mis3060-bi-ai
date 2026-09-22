@@ -1,7 +1,0 @@
-[33mcommit c3325e2ff690c46697e77f2440d17f7cc91a13c2[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
-Author: Delia <dkline04@villanova.edu>
-Date:   Tue Sep 22 14:54:13 2026 -0400
-
-    HW2: EDA on fact_transactions - validated 298,772 x 9, matches all benchmarks
-    
-    Validation findings: 101,597 null security/shares/price = Deposit + Withdrawal + Advisory Fee exactly (missing by design). txn_date loads as text and must be converted with pd.to_datetime before time-series work. Benchmark mismatches were display-only (str vs object label from pandas version; median rounding tie at 41220.485). 836 Buy rows have negative shares but a positive amount equal to |shares| x price, with no matching original Buy, spread across 692 clients and all 25 advisors - points to a system-wide sign error, not reversals; flagged, not dropped. Advisory Fee mean is 8.5x its median. Scatter plot hides Buy/Dividend under Sell (overplotting, not a data issue).
