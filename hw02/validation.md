@@ -92,7 +92,7 @@ Don't drop them outright — at 0.28% of the data the stakes are low, but deleti
 ### 2C — Business Check & Cross-Validation (16 points)
 1. `security_id`, `shares`, and `price` are all null in exactly 101,597 rows. Looking at the `txn_type` value counts, which three transaction types would you expect to have no security — and why? Do the counts add up to 101,597?
 
-Deposit, withdrawal, and advisory fee are the three transaction types I would expect to have no security because they move cash in or out of an account or charge a fee. Since none of them involve buying ot selling a security there is no security_id to attach, or shares/price to reord. Adding their counts 35,981+29,850+35,766 = 101,597 which matches perfectly.
+Deposit, withdrawal, and advisory fee are the three transaction types I would expect to have no security because they move cash in or out of an account or charge a fee. Since none of them involve buying to selling a security there is no security_id to attach, or shares/price to reord. Adding their counts 35,981+29,850+35,766 = 101,597 which matches perfectly.
 
 2. There are 83,556 Buy transactions and 59,755 Sell transactions. What does it mean for a wealth management firm to have significantly more Buys than Sells over a five-year period?
 
@@ -100,15 +100,15 @@ When a wealth management firm has a significantly higher buy than sell count ove
 
 3. The `txn_date` column is stored as a string (type `object`) rather than a date. If Claude Cowork generated code to compute the average number of days between transactions, what would go wrong if the dates remained as strings?
 
-If txn_date stays a string, computing the average days between transactions would either fail or produce an incorrect answer. There would be a TypeError becuase it is not a valid operation in python to subtract two strings, so a formula such as date2-date1 would not work. 
+If txn_date stays a string, computing the average days between transactions would either fail or produce an incorrect answer. There would be a TypeError because it is not a valid operation in python to subtract two strings, so a formula such as date2-date1 would not work. 
 
 4. Wildcat Capital has 2,700 clients served by 25 advisors. Is that ratio — roughly 108 clients per advisor — plausible for a registered investment advisory firm?
 
-I think having 108 clients served by 25 advisors could be possible for a registered investment advisory firm. These advisors could be supported by many junior staff members on the relationships with their clients so that they can ensure each individual gets attention while also maintaining a large book of business. With this being said if these clients are very complex and need a lot of financial assistance than maybe the firm is understaffed. 
+I think having 108 clients per advisor could be possible for a registered investment advisory firm. These advisors could be supported by many junior staff members on the relationships with their clients so that they can ensure each individual gets attention while also maintaining a large book of business. With this being said if these clients are very complex and need a lot of financial assistance than maybe the firm is understaffed. 
 
 5. 836 `Buy` transactions have negative `shares` values (as low as −499.63), while every other transaction type in the dataset has only positive share values. What are two plausible business explanations for a negative share count on a Buy transaction (for example, a data-entry sign error versus a legitimate correction or reversal entry), and what would you do next to determine which explanation is more likely?
 
-One possible explanation is a data-entry error where a Buy is recorded with the share count was entered as negative by mistake when it should have been positive. Annother possibility is a legitimate correction/reversal entry where the negative-share Buy is used to reverse an earlier mistake Buy transaction. To determine which is more likely I would look at the actual rows and check whether the amount and price on these rows look normal or if they are unusual such as negative or out of the typical range. I would also check to see if each negative-share Buy has a matching original transaction it appears to reverse with similiar dates, share magnitude, and the same client. If they cluster near a specific client_id or advisor_id it may suggest a data entry issue while if they are more spread evenly throughout it could be a better indicator of convention designed to reverse entries. 
+One possible explanation is a data-entry error where a Buy is recorded with the share count was entered as negative by mistake when it should have been positive. Another possibility is a legitimate correction/reversal entry where the negative-share Buy is used to reverse an earlier mistake Buy transaction. To determine which is more likely I would look at the actual rows and check whether the amount and price on these rows look normal or if they are unusual such as negative or out of the typical range. I would also check to see if each negative-share Buy has a matching original transaction it appears to reverse with similar dates, share magnitude, and the same client. If they cluster near a specific client_id or advisor_id it may suggest a data entry issue while if they are more spread evenly throughout it could be a better indicator of convention designed to reverse entries. 
 
 6. What did each script return?
 
