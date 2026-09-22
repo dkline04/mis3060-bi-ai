@@ -105,3 +105,15 @@ I think having 108 clients served by 25 advisors could be possible for a registe
 5. 836 `Buy` transactions have negative `shares` values (as low as −499.63), while every other transaction type in the dataset has only positive share values. What are two plausible business explanations for a negative share count on a Buy transaction (for example, a data-entry sign error versus a legitimate correction or reversal entry), and what would you do next to determine which explanation is more likely?
 
 One possible explanation is a data-entry error where a Buy is recorded with the share count was entered as negative by mistake when it should have been positive. Annother possibility is a legitimate correction/reversal entry where the negative-share Buy is used to reverse an earlier mistake Buy transaction. To determine which is more likely I would look at the actual rows and check whether the amount and price on these rows look normal or if they are unusual such as negative or out of the typical range. I would also check to see if each negative-share Buy has a matching original transaction it appears to reverse with similiar dates, share magnitude, and the same client. If they cluster near a specific client_id or advisor_id it may suggest a data entry issue while if they are more spread evenly throughout it could be a better indicator of convention designed to reverse entries. 
+
+6. What did each script return?
+
+The first script returned- Buy count (direct filter): 83556
+The second script returned- Total rows: 298772 Non-Buy rows: 215216 Buy count (by subtraction): 83556
+
+7. Do the results agree? If not, which one is wrong and why?
+Yes, the results agree.
+
+
+8. Why is it useful to verify a count using subtraction rather than direct filtering?
+Subtraction and direct filtering use completely different logic to reach the same number. If they agree, it's strong evidence the count is correct, since it's unlikely two independent methods would both be wrong in exactly the same way. If they disagree, it  flags a potential issue like a typo in a category name or a missed transaction type that a single filter alone would never reveal, since one wrong but possible number gives no hint that anything's off.
