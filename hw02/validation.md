@@ -75,11 +75,15 @@ Yes. It's stored as str, not a real datetime. Claude noted the min/max values sh
 
 5. Do the chart images match Claude's explanation of that section?
 
-Histogram (hist_amount.png) — Matches cleanly. Clear right-skew with a long tail out past $200K, and the mean line (red, ~$54,075) sits to the right of the median line (green, ~$41,220), exactly as predicted.
+Histogram (hist_amount.png): Matches. The distribution is clearly right-skewed, with a long tail past $200K. The mean line (red, about $54,075) sits to the right of the median line (green, about $41,220), exactly as predicted.
 
-Box plot (box_amount_by_type.png) — Matches, and adds a visual to the Advisory Fee anomaly Claude flagged in Prompt 2. Advisory Fee's box is tiny and pinned near $0, with a massive stream of outlier dots stretching out past $140,000 — visually confirming the "8.5x mean/median gap" observation. The other five types show wider, more normal-looking boxes with only Sell, Dividend, and Buy having a handful of high-end outliers.
+Box plot (box_amount_by_type.png): Matches, and it shows the Advisory Fee anomaly Claude flagged in Prompt 2. Advisory Fee's box is tiny and pinned near $0, with a long stream of outlier dots reaching past $140,000, which backs up the roughly 8.5x gap between its mean and median. The other five types have wider, more normal-looking boxes.
 
-Scatter plot (scatter_shares_amount.png) — This is where there's a real discrepancy worth writing up. The legend lists all six transaction types, but the plot only visibly shows two colors: orange (Buy) on the negative-shares side, and purple (Sell) on the positive-shares side. Dividend also has non-null shares/price (53,864 rows), and the ~82,720 Buy transactions with positive shares should appear on the right side too — but neither is visible.
+Scatter plot (scatter_shares_amount.png): Mostly matches, but the image is misleading at first glance. The legend lists all six transaction types, yet only two colors are visible: orange (Buy) on the negative-shares side and purple (Sell) on the positive side. At first this looked like a data problem, but it's a charting issue called overplotting:
+
+Deposit, Withdrawal and Advisory Fee have no shares value (those are the 101,597 null rows), so they have no points to plot, even though the legend still lists them.
+Buy, Dividend and Sell cover almost the same range of shares and amounts. The script draws each type in alphabetical order, so Sell is drawn last and its points cover the Buy and Dividend points underneath.
+The negative side shows only orange because the 836 negative-share rows are all Buys, which matches the anomaly from the benchmarks.
 
 6. Follow up question: Should I drop the 836 negative-share Buy transactions before analysis, or keep them?
 
