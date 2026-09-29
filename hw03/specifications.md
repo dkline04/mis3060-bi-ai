@@ -1,8 +1,6 @@
 # HW3 Specifications
 MIS3060 Business Intelligence with AI | Delia Kline
 
-Written before any code was generated. Each specification below is the prompt sent to Claude Cowork.
-
 ---
 
 ## Specification A: Earnings Pipeline (Item 2.02)
@@ -85,3 +83,4 @@ If a field can't be extracted, store `"NOT_FOUND"`, never blank or `None`.
 Always create the file with a header row, even if there are zero events. When finished, print a confirmation with the number of events saved.
 
 **9. Error handling.** If one filing can't be downloaded or parsed, print a warning and continue. One bad filing must never stop the script.
+.\.venv\Scripts\Activate.ps1
