@@ -114,11 +114,12 @@ Always create the file with a header row, even if there are zero events. When fi
 - **Microsoft, JPMorgan:** No fixes needed.
 
 **Executive events pipeline**
-- **All companies:** The first run had 45 "events", including non-names such as "Regulation S-K", "Proxy Statement", "Tesco PLC" and "Separation Date", plus duplicates ("Di Sibio" and "Carmine Di Sibio"). A name now has to be confirmed as a person, for example by a later "Mr./Ms. [surname]" or an event word right next to it, and duplicates are merged. The final run has 31 events.
+- **All companies:** The first run had 45 "events", including non-names such as "Regulation S-K", "Proxy Statement", "Tesco PLC" and "Separation Date", plus duplicates ("Di Sibio" and "Carmine Di Sibio"). A name now has to be confirmed as a person, for example by a later "Mr./Ms. [surname]" or an event word right next to it, and duplicates are merged. The second run had 31 events.
 - **Apple:** Tim Cook's move from CEO to Executive Chair was dropped, and Kate Adams was labeled an appointment instead of a departure. Both were fixed after reading the saved Item 5.02 text.
 - **Walmart:** Doug McMillon was missed because his name starts with an initial ("C. Douglas McMillon"), and John Furner's January 2026 event was dropped. Both fixed.
 - **NVIDIA:** A compensation filing about "named executive officers" produced 6 fake appointments, because "named" was treated as an appointment word. Fixed.
 - **Microsoft:** "Will not stand for re-election" was counted as both a departure and an appointment, because "election" matched. Fixed.
+- **Final check (all companies):** I saved the Item 5.02 text for every filing and compared it to the CSV. Three rows with no name (Microsoft, NVIDIA, JPMorgan) turned out to be pay-only filings, so the script now skips them. NVIDIA's CAO retirement (Donald Robertson) had been missed, John Ternus's effective date was the board vote date instead of September 1, and several titles were cut off (mainly Walmart's). I asked Claude to fix these, tested the fixes against the saved text, and reran. The final run has 29 events (details in `validation.md` 5D).
 
 ---
 

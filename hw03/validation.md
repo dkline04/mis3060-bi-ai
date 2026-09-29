@@ -28,7 +28,7 @@ Walmart after the fix: Q2 FY27 (quarter ended July 31, 2026) = revenue $187.9 bi
 | Check | News Source Confirms? | Notes |
 |---|---|---|
 | Person name and title | ✅ Yes | Tim Cook, Chief Executive Officer. Apple's announcement confirms he moves from CEO to Executive Chairman of the Board ([Apple Newsroom, April 20, 2026](https://www.apple.com/newsroom/2026/04/tim-cook-to-become-apple-executive-chairman-john-ternus-to-become-apple-ceo/)). The CSV title is the role he is leaving. |
-| Event type (departure/appointment) | ✅ Yes | `both` is correct: he departs as CEO and is appointed Executive Chair. The same 8-K appoints John Ternus as CEO, which the pipeline captured as a separate appointment row ([9to5Mac](https://9to5mac.com/2026/04/20/apple-ceo-tim-cook-stepping-down-john-ternus-confirmed-as-new-apple-ceo/)). |
+| Event type (departure/appointment) | ✅ Yes | `both` is correct: he departs as CEO and is appointed Executive Chair. The same 8-K appoints John Ternus as CEO, which the pipeline captured as a separate appointment row (effective September 1, 2026) ([9to5Mac](https://9to5mac.com/2026/04/20/apple-ceo-tim-cook-stepping-down-john-ternus-confirmed-as-new-apple-ceo/)). |
 | Effective date | ✅ Yes | September 1, 2026, per Apple's announcement. |
 
 ## 5C: Cross-Validation (Yahoo Finance)
@@ -47,8 +47,19 @@ The two sources agree. The only difference is a labeling one: yfinance labels th
 | Check | Expected | Actual | Pass/Fail |
 |---|---|---|---|
 | `earnings_history.csv` row count | Up to 20 (5 companies × 4 quarters) | 20 | ✅ Pass |
-| `executive_events.csv` row count | At least 0 (document actual) | 31 | ✅ Pass |
-| `corporate_events_timeline.csv` created | Yes | Yes (31 rows, one per executive event) | ✅ Pass |
+| `executive_events.csv` row count | At least 0 (document actual) | 29 | ✅ Pass |
+| `corporate_events_timeline.csv` created | Yes | Yes (29 rows, one per executive event) | ✅ Pass |
 | Rows with all three fields `"NOT_FOUND"` | 0 (investigate if > 0) | 0 | ✅ Pass |
 
-Note: 3 of the 31 executive events (Microsoft 2025-12-08, NVIDIA 2026-03-06, JPMorgan 2026-01-22) have `person_name = NOT_FOUND`. These Item 5.02 filings mention event wording but no extractable person; they are most likely compensation-related filings. They were kept, not deleted, so the gap stays visible.
+**Spot-check of the executive events against the raw text.** I saved the Item 5.02 text for all 19 filings (`save_press_release_text.py --exec`, files in `raw_text/`) and compared them to the CSV. This found problems that the row counts didn't show, so I fixed the script and reran it (the earlier run had 31 rows):
+
+| Problem found | Fix | Result |
+|---|---|---|
+| 3 rows with `person_name = NOT_FOUND` (Microsoft 2025-12-08, NVIDIA 2026-03-06, JPMorgan 2026-01-22) | Reading the text showed these filings are only about pay: Microsoft's 2026 Stock Plan, NVIDIA's FY2027 bonus plan, and Jamie Dimon's 2025 compensation. No one joins or leaves. The script now prints an `INFO` line for these instead of making a row | Removed (not real executive changes) |
+| NVIDIA CAO Donald Robertson's retirement (2026-04-27) was missed | A name followed by its title ("Donald Robertson, Vice President ... and Chief Accounting Officer") now counts as a person when the sentence has an event word | Added as a departure |
+| John Ternus's effective date was "April 17, 2026" (the day the board voted) | "effective on the Transition Date" is now looked up as the date defined earlier (September 1, 2026) | Fixed |
+| Walmart titles were cut off (Guggina was just "President"; Nicholas and Watkins had the same generic title and a Jan 16 date) | Titles now keep the business unit (Walmart U.S., Walmart International, Sam's Club U.S.), and "the Effective Date" is looked up (February 1, 2026) | Fixed |
+| Missing or messy titles: Gawel, Drell, Lake (`NOT_FOUND`), Petno and Rohrbaugh ("President"), Parker ("...of the") | Added abbreviated titles (VP and CAO, CEO of CCB), Co-President, "Board of Directors", and removed trailing "of the Company" | Fixed |
+| Ajay Puri was `both` because "his successor" counted as an appointment word | "his/her successor" no longer counts as an appointment | Now `departure` |
+
+Remaining known limitations: Puri's effective date is the day he gave notice (June 28, 2026), because his retirement takes effect "upon the employment commencement date of his successor" rather than on a specific date. Marianne Lake's effective date is `NOT_FOUND` because the filing doesn't give one. John Furner appears twice, which is correct: the 2025-11-14 filing announces his promotion to Walmart Inc. CEO, and the 2026-01-16 filing reports him leaving the Walmart U.S. CEO role.
