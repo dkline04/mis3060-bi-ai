@@ -1,0 +1,111 @@
+stage,table,column,rule,kind,evaluated,passed,failed,pass_pct
+raw,dim_advisor,region,value in allowed code list,allowed list,25,25,0,100.0
+raw,dim_advisor,certifications,value in allowed code list,allowed list,25,25,0,100.0
+raw,dim_advisor,years_experience,between 0 and 60,valid range,25,25,0,100.0
+raw,dim_advisor,aum_target_mm,between 1 and 10000,valid range,25,25,0,100.0
+raw,dim_client,risk_profile,value in allowed code list,allowed list,2449,2449,0,100.0
+raw,dim_client,client_tier,value in allowed code list,allowed list,2525,2525,0,100.0
+raw,dim_client,primary_account_type,value in allowed code list,allowed list,2525,2525,0,100.0
+raw,dim_client,state,value in allowed code list,allowed list,2525,2447,78,96.911
+raw,dim_client,age,between 18 and 110,valid range,2525,2525,0,100.0
+raw,dim_client,initial_aum,between 0.01 and None,sign rule,2525,2525,0,100.0
+raw,dim_date,year,between 2020 and 2024,valid range,1827,1827,0,100.0
+raw,dim_date,quarter,between 1 and 4,valid range,1827,1827,0,100.0
+raw,dim_date,month,between 1 and 12,valid range,1827,1827,0,100.0
+raw,dim_date,week_of_year,between 1 and 53,valid range,1827,1827,0,100.0
+raw,dim_security,asset_class,value in allowed code list,allowed list,500,500,0,100.0
+raw,dim_security,expense_ratio_bps,between 0 and 300,valid range,219,219,0,100.0
+raw,fact_fees,fee_type,value in allowed code list,allowed list,122197,122197,0,100.0
+raw,fact_fees,aum_basis,between 0.01 and None,sign rule,122197,122197,0,100.0
+raw,fact_fees,bps_charged,between 0 and 300,valid range,122197,122197,0,100.0
+raw,fact_fees,amount,between 0.01 and None,sign rule,122197,122197,0,100.0
+raw,fact_portfolio_snapshot,account_type,value in allowed code list,allowed list,129547,129547,0,100.0
+raw,fact_portfolio_snapshot,aum,between 0.01 and None,sign rule,129547,129547,0,100.0
+raw,fact_portfolio_snapshot,cash_pct,between 0 and 1,valid range,129547,129547,0,100.0
+raw,fact_portfolio_snapshot,return_ytd,between -1 and None,valid range,129247,129247,0,100.0
+raw,fact_portfolio_snapshot,month,between 1 and 12,valid range,129547,129547,0,100.0
+raw,fact_portfolio_snapshot,year,between 2020 and 2024,valid range,129547,129547,0,100.0
+raw,fact_transactions,txn_type,value in allowed code list,allowed list,298772,298772,0,100.0
+raw,fact_transactions,shares,between 0.0001 and None,sign rule,197175,196339,836,99.576
+raw,fact_transactions,price,between 0.01 and None,sign rule,197175,197175,0,100.0
+raw,fact_transactions,amount,between 0.01 and None,sign rule,298772,298772,0,100.0
+raw,dim_client,,client_tier consistent with initial_aum bands,row rule (2 single-table),2525,2525,0,100.0
+raw,dim_client,,state is a 2-letter USPS code,row rule (1 column),2525,2447,78,96.911
+raw,dim_client,,zip_code is 5 digits (leading zeros kept),row rule (1 column),2525,2525,0,100.0
+raw,dim_date,,calendar attributes agree with date,row rule (2 single-table),1827,1827,0,100.0
+raw,dim_security,,sector blank only for ETFs,row rule (2 single-table),500,500,0,100.0
+raw,dim_security,,expense_ratio present only for ETFs,row rule (2 single-table),500,500,0,100.0
+raw,fact_fees,,amount = aum_basis x bps / 10000 / 12,row rule (2 single-table),122197,122197,0,100.0
+raw,fact_fees,,fee_date is first of month,row rule (2 single-table),122197,122197,0,100.0
+raw,fact_portfolio_snapshot,,active_alpha = return_ytd - benchmark_return_ytd,row rule (2 single-table),129547,129247,300,99.768
+raw,fact_portfolio_snapshot,,year/month agree with snapshot_date,row rule (2 single-table),129547,129547,0,100.0
+raw,fact_portfolio_snapshot,,|return_ytd| <= 100%,row rule (2 single-table),129247,128271,976,99.245
+raw,fact_portfolio_snapshot,,"aum not at the 1,000.00 floor value",row rule (2 single-table),129547,129127,420,99.676
+raw,fact_transactions,,security/shares/price present only for Buy/Sell/Dividend,row rule (2 single-table),298772,298772,0,100.0
+raw,fact_transactions,,amount = |shares| x price,row rule (2 single-table),197175,197175,0,100.0
+raw,fact_transactions,,shares > 0 (direction is in txn_type),row rule (1 column),197175,196339,836,99.576
+raw,fact_fees,,"aum_basis = snapshot aum (same client, month)",row rule (4 cross-table),122197,122197,0,100.0
+raw,fact_fees,,fee has a matching monthly snapshot,row rule (4 cross-table),122197,122197,0,100.0
+raw,fact_fees,,advisor_id = client's advisor,row rule (4 cross-table),122197,122197,0,100.0
+raw,fact_portfolio_snapshot,,advisor_id = client's advisor,row rule (4 cross-table),129547,129547,0,100.0
+raw,fact_transactions,,advisor_id = client's advisor,row rule (4 cross-table),298572,298572,0,100.0
+raw,fact_portfolio_snapshot,,account_type = client's primary_account_type,row rule (4 cross-table),129547,129547,0,100.0
+raw,fact_portfolio_snapshot,,benchmark matches client's risk profile,row rule (4 cross-table),125605,125605,0,100.0
+raw,fact_portfolio_snapshot,,one benchmark return per benchmark per month,row rule (4 cross-table),129547,129547,0,100.0
+raw,fact_transactions,,txn_date >= client_since,row rule (4 cross-table),298572,298572,0,100.0
+raw,fact_transactions,,inactive client: no activity after last snapshot month,row rule (4 cross-table),21092,18682,2410,88.574
+clean,dim_advisor,region,value in allowed code list,allowed list,25,25,0,100.0
+clean,dim_advisor,certifications,value in allowed code list,allowed list,25,25,0,100.0
+clean,dim_advisor,years_experience,between 0 and 60,valid range,25,25,0,100.0
+clean,dim_advisor,aum_target_mm,between 1 and 10000,valid range,25,25,0,100.0
+clean,dim_client,risk_profile,value in allowed code list,allowed list,2425,2425,0,100.0
+clean,dim_client,client_tier,value in allowed code list,allowed list,2500,2500,0,100.0
+clean,dim_client,primary_account_type,value in allowed code list,allowed list,2500,2500,0,100.0
+clean,dim_client,state,value in allowed code list,allowed list,2500,2500,0,100.0
+clean,dim_client,age,between 18 and 110,valid range,2500,2500,0,100.0
+clean,dim_client,initial_aum,between 0.01 and None,sign rule,2500,2500,0,100.0
+clean,dim_date,year,between 2020 and 2024,valid range,1827,1827,0,100.0
+clean,dim_date,quarter,between 1 and 4,valid range,1827,1827,0,100.0
+clean,dim_date,month,between 1 and 12,valid range,1827,1827,0,100.0
+clean,dim_date,week_of_year,between 1 and 53,valid range,1827,1827,0,100.0
+clean,dim_security,asset_class,value in allowed code list,allowed list,500,500,0,100.0
+clean,dim_security,expense_ratio_bps,between 0 and 300,valid range,219,219,0,100.0
+clean,fact_fees,fee_type,value in allowed code list,allowed list,122197,122197,0,100.0
+clean,fact_fees,aum_basis,between 0.01 and None,sign rule,122197,122197,0,100.0
+clean,fact_fees,bps_charged,between 0 and 300,valid range,122197,122197,0,100.0
+clean,fact_fees,amount,between 0.01 and None,sign rule,122197,122197,0,100.0
+clean,fact_portfolio_snapshot,account_type,value in allowed code list,allowed list,129547,129547,0,100.0
+clean,fact_portfolio_snapshot,aum,between 0.01 and None,sign rule,129547,129547,0,100.0
+clean,fact_portfolio_snapshot,cash_pct,between 0 and 1,valid range,129547,129547,0,100.0
+clean,fact_portfolio_snapshot,return_ytd,between -1 and None,valid range,129547,129547,0,100.0
+clean,fact_portfolio_snapshot,month,between 1 and 12,valid range,129547,129547,0,100.0
+clean,fact_portfolio_snapshot,year,between 2020 and 2024,valid range,129547,129547,0,100.0
+clean,fact_transactions,txn_type,value in allowed code list,allowed list,298572,298572,0,100.0
+clean,fact_transactions,shares,between 0.0001 and None,sign rule,197044,197044,0,100.0
+clean,fact_transactions,price,between 0.01 and None,sign rule,197044,197044,0,100.0
+clean,fact_transactions,amount,between 0.01 and None,sign rule,298572,298572,0,100.0
+clean,dim_client,,client_tier consistent with initial_aum bands,row rule (2 single-table),2500,2500,0,100.0
+clean,dim_client,,state is a 2-letter USPS code,row rule (1 column),2500,2500,0,100.0
+clean,dim_client,,zip_code is 5 digits (leading zeros kept),row rule (1 column),2500,2500,0,100.0
+clean,dim_date,,calendar attributes agree with date,row rule (2 single-table),1827,1827,0,100.0
+clean,dim_security,,sector blank only for ETFs,row rule (2 single-table),500,500,0,100.0
+clean,dim_security,,expense_ratio present only for ETFs,row rule (2 single-table),500,500,0,100.0
+clean,fact_fees,,amount = aum_basis x bps / 10000 / 12,row rule (2 single-table),122197,122197,0,100.0
+clean,fact_fees,,fee_date is first of month,row rule (2 single-table),122197,122197,0,100.0
+clean,fact_portfolio_snapshot,,active_alpha = return_ytd - benchmark_return_ytd,row rule (2 single-table),129547,129547,0,100.0
+clean,fact_portfolio_snapshot,,year/month agree with snapshot_date,row rule (2 single-table),129547,129547,0,100.0
+clean,fact_portfolio_snapshot,,|return_ytd| <= 100%,row rule (2 single-table),129547,128570,977,99.246
+clean,fact_portfolio_snapshot,,"aum not at the 1,000.00 floor value",row rule (2 single-table),129547,129127,420,99.676
+clean,fact_transactions,,security/shares/price present only for Buy/Sell/Dividend,row rule (2 single-table),298572,298572,0,100.0
+clean,fact_transactions,,amount = |shares| x price,row rule (2 single-table),197044,197044,0,100.0
+clean,fact_transactions,,shares > 0 (direction is in txn_type),row rule (1 column),197044,197044,0,100.0
+clean,fact_fees,,"aum_basis = snapshot aum (same client, month)",row rule (4 cross-table),122197,122197,0,100.0
+clean,fact_fees,,fee has a matching monthly snapshot,row rule (4 cross-table),122197,122197,0,100.0
+clean,fact_fees,,advisor_id = client's advisor,row rule (4 cross-table),122197,122197,0,100.0
+clean,fact_portfolio_snapshot,,advisor_id = client's advisor,row rule (4 cross-table),129547,129547,0,100.0
+clean,fact_transactions,,advisor_id = client's advisor,row rule (4 cross-table),298572,298572,0,100.0
+clean,fact_portfolio_snapshot,,account_type = client's primary_account_type,row rule (4 cross-table),129547,129547,0,100.0
+clean,fact_portfolio_snapshot,,benchmark matches client's risk profile,row rule (4 cross-table),125605,125605,0,100.0
+clean,fact_portfolio_snapshot,,one benchmark return per benchmark per month,row rule (4 cross-table),129547,129547,0,100.0
+clean,fact_transactions,,txn_date >= client_since,row rule (4 cross-table),298572,298572,0,100.0
+clean,fact_transactions,,inactive client: no activity after last snapshot month,row rule (4 cross-table),21092,18682,2410,88.574

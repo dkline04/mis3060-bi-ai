@@ -1,0 +1,11 @@
+stage,reconciliation,table,rows,rows_matching,stored_total,recomputed_total,match_pct
+raw,fee amount = aum_basis x bps / 10000 / 12,fact_fees,122197,122197,204675583.12,204675583.12,100.0
+raw,trade amount = shares x price (shares as stored),fact_transactions,197175,196339,12579735404.24,12475688405.15,99.576
+raw,"fee aum_basis = snapshot aum (same client, month)",fact_fees vs snapshot,122197,122197,538491810665.51,538491810665.51,100.0
+raw,return_ytd = benchmark_return_ytd + active_alpha_ytd,fact_portfolio_snapshot,129547,129247,14788.2481,14811.475,99.768
+raw,dim_client rows = distinct clients with activity,dim_client vs facts,2525,2500,2525.0,2500.0,99.01
+clean,fee amount = aum_basis x bps / 10000 / 12,fact_fees,122197,122197,204675583.12,204675583.12,100.0
+clean,trade amount = shares x price (shares as stored),fact_transactions,197044,197044,12571369932.59,12571369932.46,100.0
+clean,"fee aum_basis = snapshot aum (same client, month)",fact_fees vs snapshot,122197,122197,538491810665.51,538491810665.51,100.0
+clean,return_ytd = benchmark_return_ytd + active_alpha_ytd,fact_portfolio_snapshot,129547,129547,14811.4726,14811.475,100.0
+clean,dim_client rows = distinct clients with activity,dim_client vs facts,2500,2500,2500.0,2500.0,100.0
