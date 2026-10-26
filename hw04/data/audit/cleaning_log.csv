@@ -1,0 +1,20 @@
+step,table,issue,action,rows_affected,note
+1,fact_transactions,raw file arrived as 'fact_transactions(2).csv',standardize file name (clean file written as fact_transactions.csv),0,read from fact_transactions(2).csv; raw file not renamed
+2,fact_transactions,security_id stored as '45.0' (0% text join to dim_security),convert to whole-number text,197175,verified: 100% of converted keys exist in dim_security
+3,dim_client,state written as full name (e.g. 'Pennsylvania'),standardize to USPS code,78,
+4,fact_portfolio_snapshot,return_ytd stored as percent text (e.g. '9.28%'),convert to decimal = benchmark_return_ytd + active_alpha_ytd,300,reconciled to percent text within 0.0000500 on every row
+5,fact_transactions,Buy rows with negative shares (amount positive),convert shares to absolute value,836,verified amount = |shares| x price for all affected rows
+6,dim_client,"near-duplicate clients (same person, mis-keyed last_name)",quarantine,25,25 ids from 2501 to 2525; 0 fact rows reference them
+7,fact_transactions,client_id has no matching client,quarantine,200,"200 distinct client_ids; amount 10,888,495.37"
+8,dim_client,risk_profile blank (cannot infer a suitability record),flag (value left blank),75,"verified: all their snapshots use benchmark 3 - noted, not used to fill"
+9,fact_portfolio_snapshot,"|return_ytd| > 100% (small accounts, AUM jumps)",flag (value kept),977,144 clients
+10,fact_portfolio_snapshot,"aum exactly 1,000.00 (looks like a system floor)",flag (value kept),420,92 clients
+11,fact_transactions,inactive client has transactions after last snapshot month,flag (row kept),2410,131 clients
+12,dim_advisor,row reconciliation,assert raw = clean + quarantined,0,raw 25 = clean 25 + quarantined 0
+13,dim_benchmark,row reconciliation,assert raw = clean + quarantined,0,raw 8 = clean 8 + quarantined 0
+14,dim_client,row reconciliation,assert raw = clean + quarantined,25,raw 2525 = clean 2500 + quarantined 25
+15,dim_date,row reconciliation,assert raw = clean + quarantined,0,raw 1827 = clean 1827 + quarantined 0
+16,dim_security,row reconciliation,assert raw = clean + quarantined,0,raw 500 = clean 500 + quarantined 0
+17,fact_fees,row reconciliation,assert raw = clean + quarantined,0,raw 122197 = clean 122197 + quarantined 0
+18,fact_portfolio_snapshot,row reconciliation,assert raw = clean + quarantined,0,raw 129547 = clean 129547 + quarantined 0
+19,fact_transactions,row reconciliation,assert raw = clean + quarantined,200,raw 298772 = clean 298572 + quarantined 200
