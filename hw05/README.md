@@ -77,10 +77,3 @@ I ran Claude Code on `check_star_schema.py` before committing. It confirmed the 
 | 8 | Optional: wrap the code in a `main()` function instead of using a `global` counter, and check that the snapshot `year`/`month` columns match `snapshot_date`. | **Not changed.** Not required for the assignment. Claude Code checked that year/month agree with the date on every row. |
 
 After the changes the script runs **44 checks, all passing**.
-
-**Power BI model review (Claude, before the code review)**
-- Found a leftover `_Measure` table with a "Total Fees" measure and a calculated `Advisor` column in dim_advisor. The assignment says no measures and no new columns yet, so both were **removed**, along with two test visuals on the report page.
-- Found three hidden auto date/time tables Power BI had added on its own. Turned **Auto date/time off**, which removed them.
-- Found that `dim_date` was **not marked as a date table**. Marked it on `date`.
-- Found that the `dim_client → dim_advisor` link was missing. **Added it as inactive** so the model shows the foreign key without creating a second path to dim_advisor.
-- Confirmed in DAX query view: row counts match the handout, column types follow the guide (`zip_code` is Text, `is_active` is True/False, dates are Date), and there are no orphan keys.
