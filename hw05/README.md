@@ -46,7 +46,7 @@ The script checks:
 - **Grain**: snapshots are one row per `client_id + snapshot_date` and fees are one row per `client_id + fee_date`, with no blank key columns. Both monthly dates are always the 1st of the month. Transactions are one row per `txn_id`, and no two transactions are identical apart from their ID.
 - **Part E(b)**: each fact row's `advisor_id` matches the client's advisor in `dim_client` on every row.
 
-To open the model, open `powerbi/hw05.pbix` in Power BI Desktop (Apporto virtual desktop).
+To open the model, open `powerbi/hw05.pbix` in Power BI Desktop (Apporto virtual desktop). The report page shows the row count of every table.
 
 ## Power BI model summary
 
@@ -57,7 +57,8 @@ To open the model, open `powerbi/hw05.pbix` in Power BI Desktop (Apporto virtual
   - `dim_client → dim_advisor` (**inactive**, so dim_advisor has only one active path to each fact).
 - `dim_date` is marked as the date table on `date`.
 - Auto date/time is turned off, so Power BI adds no hidden date tables.
-- No DAX measures, since measures start in ICE 9 / Assignment 6.
+- Every ID, date-part, flag and dimension number (age, initial_aum, years_experience, aum_target_mm, expense_ratio_bps) is set to **Don't summarize**, so only real measures (amounts, AUM, prices, rates) show the Σ sum symbol.
+- The only DAX is 8 `COUNTROWS` row-count measures (one per table, as the Power BI guide allows). The report page has a table showing all 8 counts, which match the handout: 25 / 8 / 2,500 / 1,827 / 500 / 122,197 / 129,547 / 298,572. All other measures start in ICE 9 / Assignment 6.
 
 ## Claude Code findings
 

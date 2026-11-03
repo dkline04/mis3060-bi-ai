@@ -27,7 +27,7 @@ All numbers below come from `check_star_schema.py`, which loads the eight clean 
 
 ## Part B – Grain
 
-- **fact_portfolio_snapshot:** One row represents one client's account at the start of one month (client + month). There are 0 duplicates on `client_id + snapshot_date`, and every `snapshot_date` is the 1st of the month.
+- **fact_portfolio_snapshot:** One row represents one client's account for one month (client + month, dated the 1st of the month). There are 0 duplicates on `client_id + snapshot_date`, and every `snapshot_date` is the 1st of the month.
 - **fact_fees:** One row represents the one fee charged to one client in one month. There are 0 duplicates on `client_id + fee_date`, and every `fee_date` is the 1st of the month, so this means one fee per client per month. `fee_type` says what kind of fee it was (Management, Advisory, Custodial or Performance).
 - **fact_transactions:** One row represents a single transaction (a buy, sell, dividend, deposit, withdrawal or advisory-fee debit) for one client on one day. `txn_id` is unique, and no two rows are identical apart from `txn_id`.
 
@@ -66,7 +66,7 @@ Test used for each column: *if I add this up across clients, across months, or b
 - `dim_advisor[years_experience]` and `dim_advisor[aum_target_mm]`: describe one advisor each.
 - `dim_security[expense_ratio_bps]`: a rate, blank for non-ETFs.
 
-In Power BI these columns should be set to **Don't summarize**.
+In Power BI these columns, plus every ID, date-part and flag column above, are set to **Don't summarize**, so Power BI never adds them up by default.
 
 ---
 
