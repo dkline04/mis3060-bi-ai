@@ -27,7 +27,7 @@ hw06/
 `Total Fees`, `Net Flows`, `AUM (naive SUM)` (kept only to show the mistake, never on the report; its description says "WRONG"), `Ending AUM`, `Ending Clients`, `Avg AUM per Client`, `Ending AUM LY`, `AUM YoY %`, `Ending AUM PM`, `AUM MoM %`, `Avg Monthly AUM`, `Fee Yield (bps)`, `Organic Growth Rate`, `AUM-Weighted Alpha`, `Alpha Signal`, `Top 10 Client Share`. Each one is formatted as currency, %, a count or bps.
 
 ## How to run the reconciliation
-The script reads the eight clean CSVs from `../hw05/` (Assignment 5) and the Power BI numbers from `reports/powerbi_values.csv`.
+The script reads five of the clean CSVs from `../hw05/` (Assignment 5): `fact_portfolio_snapshot`, `fact_fees`, `fact_transactions`, `dim_client` and `dim_date`. It doesn't need `dim_advisor`, `dim_benchmark` or `dim_security`, because `advisor_id` is already on the snapshot table. It reads the Power BI numbers from `reports/powerbi_values.csv`.
 
 ```bash
 cd hw06
@@ -54,7 +54,7 @@ Only 5 rows are allowed to be blank in both tools: the 2020 prior-year rows (End
 
 `AUM (naive SUM)` and its pandas twin also match ($566.7B vs the real $12.7B Ending AUM). So both tools make the same mistake if you add up a balance across months.
 
-To refresh `powerbi_values.csv`: open `hw06.pbix` → DAX query view → run `powerbi/powerbi_values_export.dax` → Copy → Entire table → save as CSV with the columns `measure, slice, value`. Each value uses `FORMAT ( v, "0.000000000000" )` so no digits are lost.
+To refresh `powerbi_values.csv`: open `hw06.pbix` → DAX query view → run `powerbi/powerbi_values_export.dax` → Copy → Entire table → save as CSV with the columns `measure, slice, value`. Each value uses `FORMAT ( v, "0.000000000000" )` (12 decimals). Power BI stores numbers with only about 15–16 significant digits, so large values come out like `88551598743.619900000000`. When saving the CSV I removed the trailing zeros (giving `88551598743.6199`). No Excel step was used. This changes no result: the largest difference it can cause is far below the 0.01 currency tolerance.
 
 **"All match" means the two tools agree, not that every definition is perfect.** The pandas code follows the same business definitions as the DAX. Two examples where both tools agree but the number needs care:
 - Organic Growth Rate at the grand total divides five years of flows by Dec 2023 AUM.
