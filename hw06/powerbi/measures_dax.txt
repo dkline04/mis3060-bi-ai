@@ -1,0 +1,18 @@
+DEFINE
+MEASURE _Measures[Total Fees] = SUM ( fact_fees[amount] )
+MEASURE _Measures[Net Flows] = CALCULATE ( SUM ( fact_transactions[amount] ), fact_transactions[txn_type] = "Deposit" ) - CALCULATE ( SUM ( fact_transactions[amount] ), fact_transactions[txn_type] = "Withdrawal" )
+MEASURE _Measures[AUM (naive SUM)] = SUM ( fact_portfolio_snapshot[aum] )
+MEASURE _Measures[Ending AUM] = CALCULATE ( SUM ( fact_portfolio_snapshot[aum] ), LASTNONBLANK ( dim_date[date], CALCULATE ( COUNTROWS ( fact_portfolio_snapshot ) ) ) )
+MEASURE _Measures[Ending Clients] = CALCULATE ( DISTINCTCOUNT ( fact_portfolio_snapshot[client_id] ), LASTNONBLANK ( dim_date[date], CALCULATE ( COUNTROWS ( fact_portfolio_snapshot ) ) ) )
+MEASURE _Measures[Avg AUM per Client] = DIVIDE ( [Ending AUM], [Ending Clients] )
+MEASURE _Measures[Ending AUM LY] = CALCULATE ( [Ending AUM], SAMEPERIODLASTYEAR ( dim_date[date] ) )
+MEASURE _Measures[AUM YoY %] = DIVIDE ( [Ending AUM] - [Ending AUM LY], [Ending AUM LY] )
+MEASURE _Measures[Ending AUM PM] = CALCULATE ( [Ending AUM], DATEADD ( dim_date[date], -1, MONTH ) )
+MEASURE _Measures[AUM MoM %] = DIVIDE ( [Ending AUM] - [Ending AUM PM], [Ending AUM PM] )
+MEASURE _Measures[Avg Monthly AUM] = DIVIDE ( SUM ( fact_portfolio_snapshot[aum] ), DISTINCTCOUNT ( fact_portfolio_snapshot[snapshot_date] ) )
+MEASURE _Measures[Fee Yield (bps)] = DIVIDE ( [Total Fees] * 12 * 10000, SUM ( fact_portfolio_snapshot[aum] ) )
+MEASURE _Measures[Organic Growth Rate] = DIVIDE ( [Net Flows], [Ending AUM LY] )
+MEASURE _Measures[AUM-Weighted Alpha] = VAR LastSnap = LASTNONBLANK ( dim_date[date], CALCULATE ( COUNTROWS ( fact_portfolio_snapshot ) ) ) RETURN CALCULATE ( DIVIDE ( SUMX ( fact_portfolio_snapshot, fact_portfolio_snapshot[aum] * fact_portfolio_snapshot[active_alpha_ytd] ), SUM ( fact_portfolio_snapshot[aum] ) ), LastSnap, fact_portfolio_snapshot[is_return_suspect] = 0 )
+MEASURE _Measures[Alpha Signal] = VAR a = [AUM-Weighted Alpha] RETURN SWITCH ( TRUE (), ISBLANK ( a ), BLANK (), a >= 0.02, "Outperforming", a <= -0.02, "Lagging", "In line" )
+MEASURE _Measures[Top 10 Client Share] = VAR LastSnap = LASTNONBLANK ( dim_date[date], CALCULATE ( COUNTROWS ( fact_portfolio_snapshot ) ) ) VAR Top10 = CALCULATE ( SUMX ( TOPN ( 10, VALUES ( dim_client[client_id] ), CALCULATE ( SUM ( fact_portfolio_snapshot[aum] ) ) ), CALCULATE ( SUM ( fact_portfolio_snapshot[aum] ) ) ), LastSnap ) RETURN DIVIDE ( Top10, [Ending AUM] )
+EVALUATE { ( "Ending AUM", [Ending AUM] ), ( "Ending AUM LY", [Ending AUM LY] ), ( "Top 10", [Top 10 Client Share] ), ( "Alpha", [AUM-Weighted Alpha] ) }
