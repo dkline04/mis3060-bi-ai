@@ -23,6 +23,7 @@ Snapshot dates fall on the 1st of each month, so `LASTDATE` / `ENDOFMONTH` would
 ```DAX
 AUM (naive SUM) = SUM ( fact_portfolio_snapshot[aum] )
 ```
+- **Format:** `$#,0` (currency)
 - **Pattern:** SUM, which is the wrong pattern for a balance.
 - **Meaning:** It adds the same money once for every month it was held. At the grand total it shows **$566.68B**, about 45× the real $12.73B the firm manages. It is never placed on the report.
 
@@ -34,6 +35,7 @@ CALCULATE (
     LASTNONBLANK ( dim_date[date], CALCULATE ( COUNTROWS ( fact_portfolio_snapshot ) ) )
 )
 ```
+- **Format:** `$#,0` (currency)
 - **Pattern:** last balance.
 - **Meaning:** How much money Wildcat manages at the end of the selected period. Today (Dec 2024) that's **$12.73B**.
 
@@ -45,6 +47,7 @@ CALCULATE (
     LASTNONBLANK ( dim_date[date], CALCULATE ( COUNTROWS ( fact_portfolio_snapshot ) ) )
 )
 ```
+- **Format:** `#,0` (count)
 - **Pattern:** last balance (a count taken at the last snapshot).
 - **Meaning:** How many clients have money with Wildcat at the end of the period. Today that's **2,325**, because the other 175 clients have left.
 
@@ -52,6 +55,7 @@ CALCULATE (
 ```DAX
 Avg AUM per Client = DIVIDE ( [Ending AUM], [Ending Clients] )
 ```
+- **Format:** `$#,0` (currency)
 - **Pattern:** recompute-and-weight (a ratio of two last balances).
 - **Meaning:** The size of a typical relationship at period end: **$5.48M** firm-wide, from $383K for Retail to $39.5M for UHNW.
 
@@ -60,6 +64,7 @@ Avg AUM per Client = DIVIDE ( [Ending AUM], [Ending Clients] )
 Ending AUM LY = CALCULATE ( [Ending AUM], SAMEPERIODLASTYEAR ( dim_date[date] ) )
 AUM YoY %     = DIVIDE ( [Ending AUM] - [Ending AUM LY], [Ending AUM LY] )
 ```
+- **Format:** `$#,0` (Ending AUM LY) and `0.00%` (AUM YoY %)
 - **Pattern:** last balance, shifted back one year. Then recompute (growth from two balances).
 - **Meaning:** How much bigger the book is than a year ago. 2024 grew **+19.6%**. 2020 is blank because there is no 2019 data. There is deliberately no `0` alternate in `DIVIDE`, so a missing prior year is never shown as "0% growth".
 
@@ -68,6 +73,7 @@ AUM YoY %     = DIVIDE ( [Ending AUM] - [Ending AUM LY], [Ending AUM LY] )
 Ending AUM PM = CALCULATE ( [Ending AUM], DATEADD ( dim_date[date], -1, MONTH ) )
 AUM MoM %     = DIVIDE ( [Ending AUM] - [Ending AUM PM], [Ending AUM PM] )
 ```
+- **Format:** `$#,0` (Ending AUM PM) and `0.00%` (AUM MoM %)
 - **Pattern:** last balance, shifted back one month. Then recompute.
 - **Meaning:** Month-over-month change in the book. December 2024 was **+4.2%** over November.
 
@@ -79,6 +85,7 @@ DIVIDE (
     DISTINCTCOUNT ( fact_portfolio_snapshot[snapshot_date] )
 )
 ```
+- **Format:** `$#,0` (currency)
 - **Pattern:** recompute (sum of balances ÷ number of months = average balance).
 - **Meaning:** The average amount managed during the period, not just at the end. In 2024 it was **$11.29B**, compared with $12.73B at year-end. This is the fair base for anything earned over the whole year.
 
@@ -87,6 +94,7 @@ DIVIDE (
 Fee Yield (bps) =
 DIVIDE ( [Total Fees] * 12 * 10000, SUM ( fact_portfolio_snapshot[aum] ) )
 ```
+- **Format:** `0.0` (basis points, 1 decimal)
 - **Pattern:** recompute-and-weight across **two fact tables** (additive fees ÷ summed monthly balances).
 - **Meaning:** What Wildcat earns per year on each dollar it manages: **43.2 bps** in 2024. Retail pays the most (82.8 bps) and UHNW the least (36.1 bps).
 
@@ -94,6 +102,7 @@ DIVIDE ( [Total Fees] * 12 * 10000, SUM ( fact_portfolio_snapshot[aum] ) )
 ```DAX
 Organic Growth Rate = DIVIDE ( [Net Flows], [Ending AUM LY] )
 ```
+- **Format:** `0.00%`
 - **Pattern:** recompute (additive flows ÷ a last balance).
 - **Meaning:** Growth from clients bringing in new money, as opposed to markets lifting existing balances. In 2024 that was **+0.7%** of last year's book.
 
@@ -113,6 +122,7 @@ RETURN
         fact_portfolio_snapshot[is_return_suspect] = 0
     )
 ```
+- **Format:** `0.00%`
 - **Pattern:** recompute-and-weight (SUMX of aum × alpha ÷ SUM of aum), read at the last snapshot only.
 - **Meaning:** How much clients beat their benchmarks so far this year, counting a $50M account 50 times more than a $1M account. 2024: **+1.45%**.
 
@@ -127,6 +137,7 @@ RETURN
         a <= -0.02, "Lagging",
         "In line" )
 ```
+- **Format:** text (no number format)
 - **Pattern:** a text label built on a recomputed rate.
 - **Meaning:** A plain-English flag a manager can scan. It is blank when there is no alpha to judge. 2022 and 2024 Retail are "Outperforming"; everything else is "In line".
 
@@ -147,6 +158,7 @@ VAR Top10 =
 RETURN
     DIVIDE ( Top10, [Ending AUM] )
 ```
+- **Format:** `0.00%`
 - **Pattern:** recompute (the top 10 clients' last balances ÷ all last balances). `VALUES ( dim_client[client_id] )` keeps the ranking **inside the current filter**, so a tier row only ranks that tier's clients.
 - **Meaning:** How concentrated the business is. The 10 largest clients hold **6.2%** of firm AUM, and 8.1% of UHNW AUM. Losing one of them would show up quickly.
 
@@ -200,7 +212,7 @@ The simple mean (0.88%) treats a $50K account like a $50M one, which understates
 | UHNW | $9.65B | +19.6% | +0.1% |
 | Firm | $12.73B | +19.6% | +0.7% |
 
-**What it says:** All three tiers grew about 19–20%, but almost none of that came from new money. For the firm, only 0.7 points of the 19.6% is net new money; the rest is market gains on existing balances. **Retail is the only tier really bringing in new money** (+9.9% of last year's book). UHNW, which holds three-quarters of the assets, added almost nothing (+0.1%). Wildcat's organic growth comes from its smallest clients.
+**What it says:** All three tiers grew about 19–20%, but almost none of that came from new money. For the firm, only 0.7 points of the 19.6% is net new money. The rest comes from changes in existing balances (for example market returns), which this ratio can't break down. **Retail is the only tier really bringing in new money** (+9.9% of last year's book). UHNW, which holds three-quarters of the assets, added almost nothing (+0.1%). Wildcat's organic growth comes from its smallest clients.
 
 **What it does not tell you:**
 - *Why* the growth happened. Investment returns, client withdrawals and lost clients are all mixed into AUM YoY %.

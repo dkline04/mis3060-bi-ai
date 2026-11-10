@@ -85,5 +85,5 @@ I ran `claude` in the `hw06` folder and asked it to review `scripts/01_reconcile
 
 ## Notes
 - `hw06.pbix` was built in Power BI Desktop on Apporto. That version is older than the one that made the posted file, so the data was **never refreshed** in Apporto. The model data is the data that came with `Wildcat_Star_Model.pbix`.
-- The **Measures** page has 4 cards (Ending AUM, Ending Clients, Avg AUM per Client, Top 10 Client Share) along the top, the year table, and the 2024 tier table. In Apporto's older Power BI the Card visual draws blank, but each card holds the right measure. A current Power BI Desktop should show the values.
+- The **Measures** page has 4 cards (Ending AUM, Ending Clients, Avg AUM per Client, Top 10 Client Share) along the top, the year table, the 2024 tier table, and a small **"Card values" table** at the bottom. In Apporto's older Power BI the Card visual draws blank, even though each card holds the right measure. The "Card values" table shows the same 4 numbers ($12,729,572,079 · 2,325 · $5,475,085 · 6.16%), so they are visible in any Power BI version.
 - The posted model has Power BI's Auto date/time hidden tables (`LocalDateTable_…`). I left them as they were. No measure uses them.
